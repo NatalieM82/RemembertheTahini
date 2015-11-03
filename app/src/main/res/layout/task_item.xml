@@ -1,0 +1,40 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="64dip"
+    android:weightSum="1">
+
+    <ImageView
+        android:id="@+id/avatar"
+        android:src="@drawable/task_icon"
+        android:scaleType="centerCrop"
+        android:layout_marginLeft="8dip"
+        android:layout_gravity="center_vertical"
+        android:layout_width="48dip"
+        android:layout_height="48dip" />
+
+    <TextView
+        android:id="@+id/task_description"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:text="My Name"
+        android:orientation="vertical"
+        android:layout_gravity="center_vertical"
+        android:textAppearance="@android:style/TextAppearance.Large"
+        android:layout_centerVertical="true"
+        android:layout_toEndOf="@+id/avatar" />
+
+    <ImageButton
+        android:layout_width="50dp"
+        android:layout_height="48dp"
+        android:id="@+id/doneButton"
+        android:src="@drawable/done_btn"
+        android:scaleType="centerCrop"
+        android:background="#00ffffff"
+        android:layout_alignParentRight="true"
+        android:layout_gravity="right" />
+
+
+</RelativeLayout>
