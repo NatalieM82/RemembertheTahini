@@ -7,4 +7,5 @@ import java.util.List;
  */
 public interface ITasksController {
     List<TaskItem> GetTasks();
+    void addTask(TaskItem task);
 }

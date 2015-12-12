@@ -6,7 +6,10 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -16,9 +19,11 @@ import android.widget.Toast;
 
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements OnDataSourceChangeListener {
 
     private ITasksController controller;
+    private static final String TAG = "MainActivity";
+    private TaskItemBaseAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,21 +34,31 @@ public class MainActivity extends AppCompatActivity {
 
         controller = new TasksController();
 
-        ListView  lv = (ListView) findViewById(R.id.listView);
+        RecyclerView  lv = (RecyclerView) findViewById(R.id.listView);
 
-        if(lv!=null)
-        {
-            TaskItemBaseAdapter adapter = new TaskItemBaseAdapter(this, controller.GetTasks());
-            lv.setAdapter(adapter);
-            lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//        if(lv!=null)
+//        {
+//            TaskItemBaseAdapter adapter = new TaskItemBaseAdapter(this, controller.GetTasks());
+//            lv.setAdapter(adapter);
+//            lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//
+//                @Override
+//                public void onItemClick(AdapterView<?> parent, View view,
+//                                        int position, long id) {
+//                    Toast.makeText(MainActivity.this, "Item number " + (position + 1) + " was clicked", Toast.LENGTH_LONG).show();
+//                }
+//            });
+//        }
 
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view,
-                                        int position, long id) {
-                    Toast.makeText(MainActivity.this, "Item number " + (position + 1) + " was clicked", Toast.LENGTH_LONG).show();
-                }
-            });
-        }
+        lv.setHasFixedSize(true);
+
+        // use a linear layout manager
+        LinearLayoutManager mLayoutManager = new LinearLayoutManager(this);
+        lv.setLayoutManager(mLayoutManager);
+
+        // specify an adapter (see also next example)
+        adapter = new TaskItemBaseAdapter(controller.GetTasks());
+        lv.setAdapter(adapter);
 
 
 //        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -56,31 +71,49 @@ public class MainActivity extends AppCompatActivity {
 //        });
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
 
     /** Called when the user clicks the Plus button */
     public void createNewTask(View view) {
         Intent intent = new Intent(this, NewTaskActivity.class);
-        startActivity(intent);
+        startActivityForResult(intent, 2);
+    }
+
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+//        Log.v(TAG, "im here");
+        if (requestCode == 2){
+            if (data != null){
+                String task_message = data.getStringExtra("MESSAGE");
+                Toast.makeText(MainActivity.this, task_message, Toast.LENGTH_LONG).show();
+                TaskItem new_task = new TaskItem(task_message);
+                controller.addTask(new_task);
+            }
+        }
+    }
+
+    @Override
+    public void DataSourceChanged() {
+        if (adapter != null) {
+            adapter.UpdateDataSource(controller.GetTasks());
+            adapter.notifyDataSetChanged();
+        }
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.i(TAG, "onResume");
+
+        RecyclerView  lv = (RecyclerView) findViewById(R.id.listView);
+        lv.setHasFixedSize(true);
+
+        // use a linear layout manager
+        LinearLayoutManager mLayoutManager = new LinearLayoutManager(this);
+        lv.setLayoutManager(mLayoutManager);
+
+        // specify an adapter (see also next example)
+        adapter = new TaskItemBaseAdapter(controller.GetTasks());
+        lv.setAdapter(adapter);
     }
 }

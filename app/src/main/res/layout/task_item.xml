@@ -6,12 +6,13 @@
 
     <ImageView
         android:id="@+id/avatar"
-        android:src="@drawable/task_icon"
+        android:background="#000000"
         android:scaleType="centerCrop"
         android:layout_marginLeft="8dip"
         android:layout_gravity="center_vertical"
         android:layout_width="48dip"
-        android:layout_height="48dip" />
+        android:layout_height="48dip"/>
+    <!--android:src="@drawable/task_icon"-->
 
     <TextView
         android:id="@+id/task_description"
@@ -30,11 +31,13 @@
         android:layout_width="50dp"
         android:layout_height="48dp"
         android:id="@+id/doneButton"
-        android:src="@drawable/done_btn"
         android:scaleType="centerCrop"
-        android:background="#00ffffff"
+        android:background="#CEBAC9"
         android:layout_alignParentRight="true"
         android:layout_gravity="right" />
+    <!--android:src="@drawable/done_btn"-->
 
 
 </RelativeLayout>
+
+
