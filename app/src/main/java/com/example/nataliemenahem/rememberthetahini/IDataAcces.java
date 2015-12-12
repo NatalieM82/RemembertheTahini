@@ -1,11 +1,18 @@
 package com.example.nataliemenahem.rememberthetahini;
 
+import com.example.nataliemenahem.rememberthetahini.TaskItem;
+
 import java.util.List;
 
 /**
  * Created by NatalieMenahem on 03/11/15.
  */
 public interface IDataAcces {
-    List<TaskItem> GetTask();
-    void addTask(TaskItem friend);
+    List<TaskItem> getAllTasks();
+    TaskItem addTask(TaskItem task);
+    void removeTask(TaskItem task);
+    TaskItem editTask(TaskItem task);
+
+    TaskItem changeStatus(TaskItem task);
+
 }

@@ -1,119 +1,154 @@
 package com.example.nataliemenahem.rememberthetahini;
 
-import android.content.Context;
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.List;
+public class MainActivity extends Activity implements OnDataSourceChangeListener {
 
-public class MainActivity extends AppCompatActivity implements OnDataSourceChangeListener {
-
-    private ITasksController controller;
-    private static final String TAG = "MainActivity";
+    private TasksController controller;
     private TaskItemBaseAdapter adapter;
+
+    private static final String TAG = "MainActivity";
+    static final int GET_TASK_REQUEST = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
 
-        controller = new TasksController();
+        // create the controller.
+        controller = new TasksController(this);
+        // register for OnDataSourceChangedListener event.
+        controller.registerOnDataSourceChanged(this);
 
-        RecyclerView  lv = (RecyclerView) findViewById(R.id.listView);
 
-//        if(lv!=null)
-//        {
-//            TaskItemBaseAdapter adapter = new TaskItemBaseAdapter(this, controller.GetTasks());
-//            lv.setAdapter(adapter);
+        ListView lv = (ListView) findViewById(R.id.listViewTasks);
+        lv.setLongClickable(true);
+        //handle the list view
+        if (lv != null) {
+            //create the adapter and get the data from the controller.
+            adapter = new TaskItemBaseAdapter(this,
+                    controller.getAllTasks());
+            lv.setAdapter(adapter);
+            //register for Long item click listener.
+            //When the user will do a long press on item in the list, the item will be removed.
+            lv.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+                public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                    TaskItem t = (TaskItem) adapter.getItem(position);
+                    controller.removeTask(t);
+                    return true;
+                }
+            });
+
 //            lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//                    TaskItem t = (TaskItem) adapter.getItem(position);
 //
-//                @Override
-//                public void onItemClick(AdapterView<?> parent, View view,
-//                                        int position, long id) {
-//                    Toast.makeText(MainActivity.this, "Item number " + (position + 1) + " was clicked", Toast.LENGTH_LONG).show();
+//                    controller.removeTask(t);
 //                }
 //            });
-//        }
-
-        lv.setHasFixedSize(true);
-
-        // use a linear layout manager
-        LinearLayoutManager mLayoutManager = new LinearLayoutManager(this);
-        lv.setLayoutManager(mLayoutManager);
-
-        // specify an adapter (see also next example)
-        adapter = new TaskItemBaseAdapter(controller.GetTasks());
-        lv.setAdapter(adapter);
 
 
-//        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-//        fab.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
-//            }
-//        });
+        }
     }
 
 
     /** Called when the user clicks the Plus button */
     public void createNewTask(View view) {
         Intent intent = new Intent(this, NewTaskActivity.class);
-        startActivityForResult(intent, 2);
+        startActivityForResult(intent, GET_TASK_REQUEST);
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-//        Log.v(TAG, "im here");
-        if (requestCode == 2){
-            if (data != null){
-                String task_message = data.getStringExtra("MESSAGE");
-                Toast.makeText(MainActivity.this, task_message, Toast.LENGTH_LONG).show();
-                TaskItem new_task = new TaskItem(task_message);
-                controller.addTask(new_task);
+        if (resultCode == RESULT_OK && requestCode == GET_TASK_REQUEST) {
+            Bundle extras = data.getExtras();
+            if (extras != null) {
+                String taskDesc = extras.getString(AppConst.ExtrasTaskName);
+                TaskItem t = new TaskItem();
+                t.setDescription(taskDesc);
+
+                long edit_task_id = extras.getLong(AppConst.ExtrasTaskId);
+                if (edit_task_id != 0) {
+                    t.setTaskId(edit_task_id);
+                    t.changeStatus("false");
+                    controller.editTask(t);
+                }
+                else
+                {
+                    t.changeStatus("false");
+                    controller.addTask(t);
+
+                }
             }
+
         }
     }
 
     @Override
     public void DataSourceChanged() {
         if (adapter != null) {
-            adapter.UpdateDataSource(controller.GetTasks());
+            adapter.UpdateDataSource(controller.getAllTasks());
             adapter.notifyDataSetChanged();
         }
 
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        Log.i(TAG, "onResume");
 
-        RecyclerView  lv = (RecyclerView) findViewById(R.id.listView);
-        lv.setHasFixedSize(true);
+    public void editTask(View view) {
+        View parentRow = (View) view.getParent();
+        ListView listView = (ListView) parentRow.getParent();
+        final int position = listView.getPositionForView(parentRow);
 
-        // use a linear layout manager
-        LinearLayoutManager mLayoutManager = new LinearLayoutManager(this);
-        lv.setLayoutManager(mLayoutManager);
+        TaskItem t = (TaskItem) adapter.getItem(position);
+        String task_desc = t.getDescription();
+        long task_id = t.getTaskId();
 
-        // specify an adapter (see also next example)
-        adapter = new TaskItemBaseAdapter(controller.GetTasks());
-        lv.setAdapter(adapter);
+        Intent intent = new Intent(this, NewTaskActivity.class);
+        intent.putExtra(AppConst.ExtrasTaskName, task_desc);
+        intent.putExtra(AppConst.ExtrasTaskId, task_id);
+        startActivityForResult(intent, GET_TASK_REQUEST);
     }
+
+    public void changeStatus(View view) {
+
+        View parentRow = (View) view.getParent();
+        ListView listView = (ListView) parentRow.getParent();
+        final int position = listView.getPositionForView(parentRow);
+
+
+        TaskItem t = (TaskItem) adapter.getItem(position);
+//        Toast.makeText(MainActivity.this, t.getStatus(), Toast.LENGTH_LONG).show();
+//        String task_desc = t.getDescription();
+//        long task_id = t.getTaskId();
+
+        String status = t.getStatus().toString();
+        String newStatus = "false".toString();
+
+        if (status.equals( newStatus ))
+        {
+//            Toast.makeText(MainActivity.this, "eq to false", Toast.LENGTH_LONG).show();
+            t.changeStatus("true");
+        }
+        else t.changeStatus("false");
+//        Toast.makeText(MainActivity.this, t.getStatus(), Toast.LENGTH_LONG).show();
+        controller.changeStatus(t);
+
+
+//        Intent intent = new Intent(this, NewTaskActivity.class);
+//        intent.putExtra(AppConst.ExtrasTaskName, task_desc);
+//        intent.putExtra(AppConst.ExtrasTaskId, task_id);
+//        startActivityForResult(intent, GET_TASK_REQUEST);
+    }
+
+
 }

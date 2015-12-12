@@ -2,17 +2,21 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="64dip"
-    android:weightSum="1">
+    android:weightSum="1"
+    android:longClickable="true">
 
-    <ImageView
-        android:id="@+id/avatar"
-        android:background="#000000"
-        android:scaleType="centerCrop"
-        android:layout_marginLeft="8dip"
-        android:layout_gravity="center_vertical"
-        android:layout_width="48dip"
-        android:layout_height="48dip"/>
     <!--android:src="@drawable/task_icon"-->
+
+    <ImageButton
+        android:layout_width="48dip"
+        android:layout_height="48dip"
+        android:id="@+id/editBTN"
+        android:scaleType="centerCrop"
+        android:layout_gravity="right"
+        android:layout_centerVertical="true"
+        android:layout_alignParentEnd="true"
+        android:background="@drawable/edit_copy"
+        android:onClick="editTask" />
 
     <TextView
         android:id="@+id/task_description"
@@ -25,16 +29,20 @@
         android:layout_gravity="center_vertical"
         android:textAppearance="@android:style/TextAppearance.Large"
         android:layout_centerVertical="true"
-        android:layout_toEndOf="@+id/avatar" />
+        android:layout_toEndOf="@+id/doneBtn"
+        android:layout_marginStart="31dp" />
 
     <ImageButton
-        android:layout_width="50dp"
-        android:layout_height="48dp"
-        android:id="@+id/doneButton"
+        android:layout_width="48dip"
+        android:layout_height="48dip"
+        android:id="@+id/doneBtn"
         android:scaleType="centerCrop"
-        android:background="#CEBAC9"
-        android:layout_alignParentRight="true"
-        android:layout_gravity="right" />
+        android:layout_gravity="right"
+        android:background="@drawable/add"
+        android:layout_alignTop="@+id/editBTN"
+        android:layout_alignParentStart="true"
+        android:longClickable="false"
+        android:onClick="changeStatus"/>
     <!--android:src="@drawable/done_btn"-->
 
 
