@@ -118,6 +118,26 @@ public class DAO implements IDataAcces {
     }
 
     @Override
+    public TaskItem getTask(long task_id) {
+        SQLiteDatabase database = null;
+        try {
+            database = dbHelper.getReadableDatabase();
+
+            //get the entity from the data base - extra validation, entity was insert properly.
+            Cursor cursor = database.query(TasksDbContract.TaskEntry.TABLE_NAME, tasksColumns,
+                    TasksDbContract.TaskEntry._ID + " = " + task_id, null, null, null, null);
+            cursor.moveToFirst();
+            //create the task object from the cursor.
+            TaskItem task = cursorToTask(cursor);
+            cursor.close();
+            return task;
+        }finally {
+            if (database != null)
+                database.close();
+        }
+    }
+
+    @Override
     public TaskItem editTask(TaskItem task) {
         SQLiteDatabase database = null;
         try {

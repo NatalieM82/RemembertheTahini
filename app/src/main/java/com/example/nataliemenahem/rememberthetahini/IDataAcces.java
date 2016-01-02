@@ -10,6 +10,7 @@ import java.util.List;
 public interface IDataAcces {
     List<TaskItem> getAllTasks();
     TaskItem addTask(TaskItem task);
+    TaskItem getTask(long task_id);
     void removeTask(TaskItem task);
     TaskItem editTask(TaskItem task);
 

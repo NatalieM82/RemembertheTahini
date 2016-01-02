@@ -64,6 +64,13 @@ public class TasksController {
         return 1;
     }
 
+    public TaskItem getTask(long task_id){
+        TaskItem retTask = dao.getTask(task_id);
+        //update what ever it will be.
+        invokeDataSourceChanged();
+        return retTask;
+    }
+
     public void changeStatus(TaskItem new_task){
         try {
 //            Log.i(TAG, new_task.getStatus());

@@ -15,6 +15,7 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.nataliemenahem.rememberthetahini.R;
@@ -26,6 +27,7 @@ public class NewTaskActivity extends Activity implements DialogListener, OnDataS
 
     private EditText descEt;
     public long edit_task_id;
+    private TaskItem currentTask;
 
     private int hasAlarm = 0; //0 no , 1 yes
     private int isDone = 0;   //0 no , 1 yes
@@ -53,6 +55,11 @@ public class NewTaskActivity extends Activity implements DialogListener, OnDataS
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
 
+        // create the controller.
+        controller = new TasksController(this);
+        // register for OnDataSourceChangedListener event.
+        controller.registerOnDataSourceChanged(this);
+
         if (extras != null) {
             String taskDesc = extras.getString(AppConst.ExtrasTaskName);
             edit_task_id = extras.getLong(AppConst.ExtrasTaskId);
@@ -62,12 +69,35 @@ public class NewTaskActivity extends Activity implements DialogListener, OnDataS
                 descEt.setText(taskDesc);
             }
 
+            currentTask = controller.getTask(edit_task_id);
+            hasAlarm = currentTask.get_alarm();
+
+            timeHour = currentTask.get_timeHour();
+            timeMinute = currentTask.get_timeMinute();
+            dateYear = currentTask.get_dateYear();
+            dateMonth = currentTask.get_dateMonth();
+            dateDay = currentTask.get_dateDay();
+
+            CheckBox checkBox = (CheckBox) findViewById(R.id.checkbox_notify);
+            TextView timeText = (TextView) findViewById(R.id.timeText);
+            TextView dateText = (TextView) findViewById(R.id.dateText);
+            if (hasAlarm == 1) {
+                checkBox.setChecked(true);
+
+                timeText.setText(timeHour + ":" + timeMinute);
+
+
+                dateText.setText(dateDay + "/" + (dateMonth+1) + "/" + dateYear);
+            }
+            else {
+                timeText.setVisibility(View.GONE);
+                dateText.setVisibility(View.GONE);
+
+            }
+
+
         }
 
-        // create the controller.
-        controller = new TasksController(this);
-        // register for OnDataSourceChangedListener event.
-        controller.registerOnDataSourceChanged(this);
 
 
     }
@@ -87,14 +117,6 @@ public class NewTaskActivity extends Activity implements DialogListener, OnDataS
         String name = descEt.getText().toString();
         // Prepare data intent
         Intent data = new Intent();
-
-
-//        //Put the extras.
-//        data.putExtra(AppConst.ExtrasTaskName, name);
-//
-//        if (edit_task_id != 0)
-//            data.putExtra(AppConst.ExtrasTaskId, edit_task_id);
-
 
         //Creating the task
         TaskItem newTask=new TaskItem(name, dateYear, dateMonth, dateDay, timeHour, timeMinute,hasAlarm);
@@ -119,14 +141,14 @@ public class NewTaskActivity extends Activity implements DialogListener, OnDataS
 
 
         //Checking if alarm is needed
-        if ((timeHour != -1 && timeMinute != -1) || (dateDay != -1 && dateMonth != -1 && dateYear != -1)) {
-            System.out.println("$$$$$$$$$$$$");
-            System.out.println("setting alarm");
-            hasAlarm = 1;
-            newTask.set_alarm(hasAlarm);
-            createAlarmAtDate(newTask);
+        if (hasAlarm == 1) {
+            if ((timeHour != -1 && timeMinute != -1) || (dateDay != -1 && dateMonth != -1 && dateYear != -1)) {
+                System.out.println("$$$$$$$$$$$$");
+                System.out.println("setting alarm");
+                newTask.set_alarm(hasAlarm);
+                createAlarmAtDate(newTask);
+            }
         }
-
 
 
         // Activity finished ok, return the data
@@ -151,6 +173,14 @@ public class NewTaskActivity extends Activity implements DialogListener, OnDataS
             hasAlarm = 0;
             isDone = 0;
 
+            TextView timeText = (TextView) findViewById(R.id.timeText);
+            TextView dateText = (TextView) findViewById(R.id.dateText);
+
+            timeText.setText("");
+            dateText.setText("");
+            timeText.setVisibility(View.GONE);
+            dateText.setVisibility(View.GONE);
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -165,27 +195,6 @@ public class NewTaskActivity extends Activity implements DialogListener, OnDataS
 
             PendingIntent pendingIntent = PendingIntent.getBroadcast(this, (int) task.getTaskId(), intent, 0);
 
-        /* getting all parameters of create Date ob from task */
-//            Date date = new Date();
-//            // fix date before and set a default day
-//            date.setYear(date.getYear() + 1900);
-//            date.setMonth(date.getMonth() + 1);
-//            date.setDate(date.getDay());
-//            date.setHours(10);
-//            date.setMinutes(0);
-//            //System.out.println("----------------"+task._dateYear+" "+task._dateMonth+" "+task._dateDay+" "+task._timeHour+" "+task._timeMinute);
-//            if (task._dateDay != -1 && task._dateMonth != -1 && task._dateYear != -1) {
-//                date.setYear(task._dateYear);
-//                date.setMonth(task._dateMonth);
-//                date.setDate(task._dateDay);
-//            }
-//            if (task._timeHour != -1 && task._timeMinute != -1) {
-//                date.setHours(task._timeHour);
-//                date.setMinutes(task._timeMinute);
-//            }
-//            if (task._timeHour == -1 && task._timeMinute == -1 && task._dateDay == -1 && task._dateMonth == -1 && task._dateYear == -1) {
-//                return;
-//            }
             AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
             alarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + millisecondsUntilDate(), pendingIntent);
 
@@ -213,12 +222,8 @@ public class NewTaskActivity extends Activity implements DialogListener, OnDataS
                 cal.set(dateYear, dateMonth, dateDay, 10, 0, 0);
             }
 
-            System.out.println("$$$$$$$$$$$$");
-            System.out.println(cal);
-
             Calendar now = Calendar.getInstance();
             long diff_in_ms = cal.getTimeInMillis() - now.getTimeInMillis();
-            System.out.println(diff_in_ms);
             return diff_in_ms;
 
         } catch (Exception e) {
@@ -229,6 +234,7 @@ public class NewTaskActivity extends Activity implements DialogListener, OnDataS
 
     public void cancel(View view)
     {
+        initialize_variables();
         finish();
     }
 

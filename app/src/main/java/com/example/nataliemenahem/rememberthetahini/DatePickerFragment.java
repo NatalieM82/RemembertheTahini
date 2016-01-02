@@ -39,10 +39,6 @@ public class DatePickerFragment extends DialogFragment
         // Because problem with month in DatePicker we fix it with +1 but not in edit mode!!
         month++;
 
-        System.out.println("****************************************");
-        System.out.println(day + "." + month + "." + year);
-        System.out.println("****************************************");
-
         // Return input text to activity
         Intent data = new Intent();
         //---set the data to pass back---

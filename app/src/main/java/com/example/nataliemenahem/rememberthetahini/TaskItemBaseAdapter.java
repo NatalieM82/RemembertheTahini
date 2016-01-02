@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import java.util.List;
@@ -28,6 +29,7 @@ public class TaskItemBaseAdapter extends BaseAdapter {
 
     static class ViewHolder {
         TextView task_description;
+        ImageButton task_statusIcon;
     }
 
     private Context context;
@@ -65,6 +67,8 @@ public class TaskItemBaseAdapter extends BaseAdapter {
             holder = new ViewHolder();
             holder.task_description = (TextView) convertView
                     .findViewById(R.id.task_description);
+            holder.task_statusIcon = (ImageButton) convertView
+                    .findViewById(R.id.doneBtn);
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
@@ -76,10 +80,12 @@ public class TaskItemBaseAdapter extends BaseAdapter {
         {
             holder.task_description.setTextColor(Color.GRAY);
             holder.task_description.setPaintFlags(Paint.STRIKE_THRU_TEXT_FLAG);
+            holder.task_statusIcon.setBackgroundResource(R.drawable.uncheck);
         }
         else {
             holder.task_description.setTextColor(Color.BLACK);
-            holder.task_description.setPaintFlags(holder.task_description.getPaintFlags() & (~ Paint.STRIKE_THRU_TEXT_FLAG));
+            holder.task_description.setPaintFlags(holder.task_description.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));
+            holder.task_statusIcon.setBackgroundResource(R.drawable.check);
         }
         return convertView;
     }

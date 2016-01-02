@@ -26,9 +26,6 @@ public class ReminderBroadCastReceiver extends BroadcastReceiver {
         myIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, myIntent, 0);
 
-//        Notification notification = new Notification(R.mipmap.ic_launcher, "Remember the Tahini reminder", System.currentTimeMillis());
-//        notification.setLatestEventInfo(context, "Remember the Tahini reminder", notificationText, pendingIntent);
-
         Notification builder = new Notification.Builder(context)
                 .setContentTitle("Remember the Tahini reminder")
                 .setContentText(notificationText)
@@ -36,9 +33,7 @@ public class ReminderBroadCastReceiver extends BroadcastReceiver {
                 .setContentIntent(pendingIntent)
                 .setWhen(System.currentTimeMillis())
                 .build();
-//        notification.flags = Notification.FLAG_AUTO_CANCEL;
-//        notification.defaults |= Notification.DEFAULT_SOUND;
-//        notification.defaults |= Notification.DEFAULT_VIBRATE;
+
         builder.defaults |= Notification.DEFAULT_SOUND;
         builder.defaults |= Notification.DEFAULT_VIBRATE;
         builder.flags = Notification.FLAG_AUTO_CANCEL;
