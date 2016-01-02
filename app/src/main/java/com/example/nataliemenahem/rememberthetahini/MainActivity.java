@@ -49,16 +49,6 @@ public class MainActivity extends Activity implements OnDataSourceChangeListener
                     return true;
                 }
             });
-
-//            lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//                    TaskItem t = (TaskItem) adapter.getItem(position);
-//
-//                    controller.removeTask(t);
-//                }
-//            });
-
-
         }
     }
 
@@ -71,27 +61,33 @@ public class MainActivity extends Activity implements OnDataSourceChangeListener
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == RESULT_OK && requestCode == GET_TASK_REQUEST) {
-            Bundle extras = data.getExtras();
-            if (extras != null) {
-                String taskDesc = extras.getString(AppConst.ExtrasTaskName);
-                TaskItem t = new TaskItem();
-                t.setDescription(taskDesc);
-
-                long edit_task_id = extras.getLong(AppConst.ExtrasTaskId);
-                if (edit_task_id != 0) {
-                    t.setTaskId(edit_task_id);
-                    t.changeStatus("false");
-                    controller.editTask(t);
-                }
-                else
-                {
-                    t.changeStatus("false");
-                    controller.addTask(t);
-
-                }
-            }
-
+//            Bundle extras = data.getExtras();
+//            if (extras != null) {
+//                String taskDesc = extras.getString(AppConst.ExtrasTaskName);
+//                TaskItem t = new TaskItem();
+//                t.setDescription(taskDesc);
+//
+//                int edit_task_id = extras.getInt(AppConst.ExtrasTaskId);
+//                if (edit_task_id != 0) {
+//                    t.setTaskId(edit_task_id);
+//                    t.changeStatus("false");
+//                    controller.editTask(t);
+//                }
+//                else
+//                {
+//                    t.changeStatus("false");
+//                    controller.addTask(t);
+//
+//                }
+//            }
+            controller.invokeDataSourceChanged();
         }
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+        controller.invokeDataSourceChanged();
     }
 
     @Override
@@ -127,27 +123,17 @@ public class MainActivity extends Activity implements OnDataSourceChangeListener
 
 
         TaskItem t = (TaskItem) adapter.getItem(position);
-//        Toast.makeText(MainActivity.this, t.getStatus(), Toast.LENGTH_LONG).show();
-//        String task_desc = t.getDescription();
-//        long task_id = t.getTaskId();
 
         String status = t.getStatus().toString();
         String newStatus = "false".toString();
 
         if (status.equals( newStatus ))
         {
-//            Toast.makeText(MainActivity.this, "eq to false", Toast.LENGTH_LONG).show();
             t.changeStatus("true");
         }
         else t.changeStatus("false");
-//        Toast.makeText(MainActivity.this, t.getStatus(), Toast.LENGTH_LONG).show();
         controller.changeStatus(t);
 
-
-//        Intent intent = new Intent(this, NewTaskActivity.class);
-//        intent.putExtra(AppConst.ExtrasTaskName, task_desc);
-//        intent.putExtra(AppConst.ExtrasTaskId, task_id);
-//        startActivityForResult(intent, GET_TASK_REQUEST);
     }
 
 

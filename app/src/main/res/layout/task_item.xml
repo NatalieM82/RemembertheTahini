@@ -13,10 +13,10 @@
         android:id="@+id/editBTN"
         android:scaleType="centerCrop"
         android:layout_gravity="right"
+        android:background="@drawable/edit_new"
+        android:onClick="editTask"
         android:layout_centerVertical="true"
-        android:layout_alignParentEnd="true"
-        android:background="@drawable/edit_copy"
-        android:onClick="editTask" />
+        android:layout_alignParentEnd="true" />
 
     <TextView
         android:id="@+id/task_description"

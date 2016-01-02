@@ -18,7 +18,13 @@ public class DAO implements IDataAcces {
     private TaskDBHelper dbHelper;
     private String[] tasksColumns = { TasksDbContract.TaskEntry._ID,
             TasksDbContract.TaskEntry.COLUMN_TASK_DESCRIPTION,
-            TasksDbContract.TaskEntry.COLUMN_TASK_STATUS,};
+            TasksDbContract.TaskEntry.COLUMN_TASK_STATUS,
+            TasksDbContract.TaskEntry.COLUMN_TASK_ALARM,
+            TasksDbContract.TaskEntry.COLUMN_TASK_DATE_DAY,
+            TasksDbContract.TaskEntry.COLUMN_TASK_DATE_MONTH,
+            TasksDbContract.TaskEntry.COLUMN_TASK_DATE_YEAR,
+            TasksDbContract.TaskEntry.COLUMN_TASK_TIME_HOUR,
+            TasksDbContract.TaskEntry.COLUMN_TASK_TIME_MINUTES};
 
     private static final String TAG = "DAO";
 
@@ -45,6 +51,13 @@ public class DAO implements IDataAcces {
             ContentValues values = new ContentValues();
             values.put(TasksDbContract.TaskEntry.COLUMN_TASK_DESCRIPTION, task.getDescription());
             values.put(TasksDbContract.TaskEntry.COLUMN_TASK_STATUS, task.getStatus());
+            values.put(TasksDbContract.TaskEntry.COLUMN_TASK_ALARM, task.get_alarm());
+            values.put(TasksDbContract.TaskEntry.COLUMN_TASK_DATE_DAY, task.get_dateDay());
+            values.put(TasksDbContract.TaskEntry.COLUMN_TASK_DATE_MONTH, task.get_dateMonth());
+            values.put(TasksDbContract.TaskEntry.COLUMN_TASK_DATE_YEAR, task.get_dateYear());
+            values.put(TasksDbContract.TaskEntry.COLUMN_TASK_TIME_HOUR, task.get_timeHour());
+            values.put(TasksDbContract.TaskEntry.COLUMN_TASK_TIME_MINUTES, task.get_timeMinute());
+
 
             //do the insert.
             long insertId = database.insert(TasksDbContract.TaskEntry.TABLE_NAME, null, values);
@@ -69,11 +82,23 @@ public class DAO implements IDataAcces {
      */
     private TaskItem cursorToTask(Cursor cursor) {
         TaskItem t = new TaskItem();
-        t.setTaskId(cursor.getInt(cursor.getColumnIndex(TasksDbContract.TaskEntry._ID)));
+        t.setTaskId(cursor.getLong(cursor.getColumnIndex(TasksDbContract.TaskEntry._ID)));
         t.setDescription(cursor.getString(cursor
                 .getColumnIndex(TasksDbContract.TaskEntry.COLUMN_TASK_DESCRIPTION)));
         t.changeStatus(cursor.getString(cursor
                 .getColumnIndex(TasksDbContract.TaskEntry.COLUMN_TASK_STATUS)));
+        t.set_alarm(cursor.getInt(cursor
+                .getColumnIndex(TasksDbContract.TaskEntry.COLUMN_TASK_ALARM)));
+        t.set_dateDay(cursor.getInt(cursor
+                .getColumnIndex(TasksDbContract.TaskEntry.COLUMN_TASK_DATE_DAY)));
+        t.set_dateMonth(cursor.getInt(cursor
+                .getColumnIndex(TasksDbContract.TaskEntry.COLUMN_TASK_DATE_MONTH)));
+        t.set_dateYear(cursor.getInt(cursor
+                .getColumnIndex(TasksDbContract.TaskEntry.COLUMN_TASK_DATE_YEAR)));
+        t.set_timeHour(cursor.getInt(cursor
+                .getColumnIndex(TasksDbContract.TaskEntry.COLUMN_TASK_TIME_HOUR)));
+        t.set_timeMinute(cursor.getInt(cursor
+                .getColumnIndex(TasksDbContract.TaskEntry.COLUMN_TASK_TIME_MINUTES)));
         return t;
     }
 
@@ -101,11 +126,16 @@ public class DAO implements IDataAcces {
                 return null;
             //build the content values.
 
-//            Cursor cursor =  database.rawQuery("select * from " + dbHelper.getDatabaseName() + " where " + BanksTable.COL_NAME + "='" + bankName + "'" , null);
-
             ContentValues values = new ContentValues();
 
             values.put(TasksDbContract.TaskEntry.COLUMN_TASK_DESCRIPTION, task.getDescription());
+            values.put(TasksDbContract.TaskEntry.COLUMN_TASK_STATUS, task.getStatus());
+            values.put(TasksDbContract.TaskEntry.COLUMN_TASK_ALARM, task.get_alarm());
+            values.put(TasksDbContract.TaskEntry.COLUMN_TASK_DATE_DAY, task.get_dateDay());
+            values.put(TasksDbContract.TaskEntry.COLUMN_TASK_DATE_MONTH, task.get_dateMonth());
+            values.put(TasksDbContract.TaskEntry.COLUMN_TASK_DATE_YEAR, task.get_dateYear());
+            values.put(TasksDbContract.TaskEntry.COLUMN_TASK_TIME_HOUR, task.get_timeHour());
+            values.put(TasksDbContract.TaskEntry.COLUMN_TASK_TIME_MINUTES, task.get_timeMinute());
 
             long edit_task_id = task.getTaskId();
 
@@ -140,6 +170,11 @@ public class DAO implements IDataAcces {
 
             values.put(TasksDbContract.TaskEntry.COLUMN_TASK_DESCRIPTION, task.getDescription());
             values.put(TasksDbContract.TaskEntry.COLUMN_TASK_STATUS, task.getStatus());
+            values.put(TasksDbContract.TaskEntry.COLUMN_TASK_DATE_DAY, task.get_dateDay());
+            values.put(TasksDbContract.TaskEntry.COLUMN_TASK_DATE_MONTH, task.get_dateMonth());
+            values.put(TasksDbContract.TaskEntry.COLUMN_TASK_DATE_YEAR, task.get_dateYear());
+            values.put(TasksDbContract.TaskEntry.COLUMN_TASK_TIME_HOUR, task.get_timeHour());
+            values.put(TasksDbContract.TaskEntry.COLUMN_TASK_TIME_MINUTES, task.get_timeMinute());
 
             long edit_task_id = task.getTaskId();
 

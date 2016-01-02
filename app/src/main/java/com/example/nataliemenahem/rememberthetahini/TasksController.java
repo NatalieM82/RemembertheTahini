@@ -35,37 +35,38 @@ public class TasksController {
         }
     }
 
-    public void addTask(TaskItem new_task){
+    public long addTask(TaskItem new_task){
         try {
-            //add the friend to the data base and use the returned friend and add it ti the local cache.
-            //the friend that returned from the DAO contain the id of the entity.
             TaskItem retTask = dao.addTask(new_task);
-            if(retTask == null) return;
+            if(retTask == null) return 0;
             //update what ever it will be.
             invokeDataSourceChanged();
+
+            return retTask.getTaskId();
         } catch (Exception e) {
             Log.e("MainController",e.getMessage());
         }
+
+        return 1;
     }
 
-    public void editTask(TaskItem new_task){
+    public long editTask(TaskItem new_task){
         try {
-            //add the friend to the data base and use the returned friend and add it ti the local cache.
-            //the friend that returned from the DAO contain the id of the entity.
             TaskItem retTask = dao.editTask(new_task);
-            if(retTask == null) return;
+            if(retTask == null) return 0;
             //update what ever it will be.
             invokeDataSourceChanged();
+            return retTask.getTaskId();
         } catch (Exception e) {
             Log.e("MainController",e.getMessage());
         }
+
+        return 1;
     }
 
     public void changeStatus(TaskItem new_task){
         try {
 //            Log.i(TAG, new_task.getStatus());
-            //add the friend to the data base and use the returned friend and add it ti the local cache.
-            //the friend that returned from the DAO contain the id of the entity.
             TaskItem retTask = dao.changeStatus(new_task);
             if(retTask == null) return;
             //update what ever it will be.

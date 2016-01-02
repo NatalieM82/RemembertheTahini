@@ -11,8 +11,9 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:id="@+id/editText"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true" />
+        android:layout_above="@+id/checkbox_notify"
+        android:layout_alignParentEnd="true"
+        android:layout_marginBottom="38dp" />
 
     <!--<Button-->
         <!--style="?android:attr/buttonStyleSmall"-->
@@ -24,11 +25,66 @@
         <!--android:layout_alignParentBottom="true"-->
         <!--android:layout_alignParentStart="true" />-->
 
+    <CheckBox android:id="@+id/checkbox_notify"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Add a reminder"
+        android:onClick="onCheckboxClicked"
+        android:checked="false"
+        android:layout_above="@+id/time"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="38dp" />
+
+    <!--<Button-->
+        <!--android:id="@+id/time"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:text="Set Time"-->
+        <!--android:onClick="showTimePickerDialog"-->
+        <!--android:enabled="false"-->
+        <!--android:layout_alignTop="@+id/date"-->
+        <!--android:layout_toEndOf="@+id/checkbox_notify"-->
+        <!--android:layout_marginStart="33dp" />-->
+    <!--<Button-->
+        <!--android:id="@+id/date"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:text="Set Date"-->
+        <!--android:onClick="showDatePickerDialog"-->
+        <!--android:enabled="false"-->
+        <!--android:layout_below="@+id/checkbox_notify"-->
+        <!--android:layout_alignParentStart="true"-->
+        <!--android:layout_marginTop="33dp" />-->
+
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Send"
+        android:text="Create Task"
         android:id="@+id/addToListBTN"
-        android:layout_alignEnd="@+id/editText"
-        android:onClick="okClicked"/>
+        android:onClick="okClicked"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true" />
+
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/time"
+        android:src="@drawable/clock"
+        android:background="#ffffff"
+        android:onClick="showTimePickerDialog"
+        android:layout_centerVertical="true"
+        android:layout_alignParentEnd="true"
+        android:enabled="false"/>
+
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/date"
+        android:src="@drawable/calendar_2"
+        android:onClick="showDatePickerDialog"
+        android:background="#ffffff"
+        android:layout_alignTop="@+id/time"
+        android:layout_alignParentStart="true"
+        android:enabled="false"/>
+
 </RelativeLayout>

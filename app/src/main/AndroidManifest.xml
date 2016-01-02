@@ -27,6 +27,13 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
         </activity>
+
+        <receiver android:name=".ReminderBroadCastReceiver" >
+            <intent-filter>
+                <action android:name="com.example.nataliemenahem.rememberthetahini.ReminderBroadCastReceiver" />
+            </intent-filter>
+        </receiver>
+
     </application>
 
 </manifest>

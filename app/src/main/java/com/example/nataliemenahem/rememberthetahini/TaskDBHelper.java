@@ -9,7 +9,7 @@ import android.database.sqlite.SQLiteOpenHelper;
  */
 public class TaskDBHelper extends SQLiteOpenHelper {
     // If you change the database schema, you must increment the database version.
-    private static final int DATABASE_VERSION = 4;
+    private static final int DATABASE_VERSION = 6;
 
     private static final String DATABASE_NAME = "tasks.db";
 
@@ -23,8 +23,14 @@ public class TaskDBHelper extends SQLiteOpenHelper {
         final String SQL_CREATE_LOCATION_TABLE = "CREATE TABLE "
                 + TasksDbContract.TaskEntry.TABLE_NAME + " (" + TasksDbContract.TaskEntry._ID
                 + " INTEGER PRIMARY KEY," + TasksDbContract.TaskEntry.COLUMN_TASK_DESCRIPTION
-                + " TEXT NOT NULL  UNIQUE ON CONFLICT REPLACE, "
-                + TasksDbContract.TaskEntry.COLUMN_TASK_STATUS + " TEXT NOT NULL)";
+                + " TEXT NOT NULL, "
+                + TasksDbContract.TaskEntry.COLUMN_TASK_STATUS + " TEXT NOT NULL, "
+                + TasksDbContract.TaskEntry.COLUMN_TASK_ALARM + " INTEGER, "
+                + TasksDbContract.TaskEntry.COLUMN_TASK_DATE_DAY + " INTEGER, "
+                + TasksDbContract.TaskEntry.COLUMN_TASK_DATE_MONTH + " INTEGER, "
+                + TasksDbContract.TaskEntry.COLUMN_TASK_DATE_YEAR + " INTEGER, "
+                + TasksDbContract.TaskEntry.COLUMN_TASK_TIME_HOUR + " INTEGER, "
+                + TasksDbContract.TaskEntry.COLUMN_TASK_TIME_MINUTES +" INTEGER )";
         db.execSQL(SQL_CREATE_LOCATION_TABLE);
     }
 
